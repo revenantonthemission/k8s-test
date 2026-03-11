@@ -1,0 +1,21 @@
+apiVersion: apps/v1                       # Deployment는 apps/v1 API 그룹에 속합니다
+kind: Deployment                          # 리소스 종류는 Deployment입니다 (Pod 자동 생성 및 관리)
+metadata:
+  name: demo-app                          # Deployment 리소스의 이름입니다
+  labels:
+    app: demo                             # 리소스를 식별하기 위한 라벨입니다
+spec:
+  replicas: 2                             # 생성할 Pod의 개수입니다 (2개 복제)
+  selector:
+    matchLabels:
+      app: demo                           # 이 라벨을 가진 Pod만 관리 대상으로 간주합니다
+  template:                               # 실제 생성될 Pod의 템플릿을 정의합니다
+    metadata:
+      labels:
+        app: demo                         # Pod에 부여될 라벨입니다 (selector 조건과 일치해야 함)
+    spec:
+      containers:
+        - name: demo                      # 컨테이너의 이름입니다
+          image: revenantonthemission/k8s-argocd-test:latest
+          ports:
+            - containerPort: 3000         # 컨테이너에서 열 포트입니다 (Express 서버 리스닝 포트)

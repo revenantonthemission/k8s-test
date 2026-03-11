@@ -1,0 +1,45 @@
+name: Build & Deploy to ArgoCD                         # 워크플로우 이름 정의
+
+on:                                                    # 트리거 조건 정의
+  push:                                                # 푸시 이벤트 발생 시 실행
+    branches: [ main ]                                 # 작성한 브랜치에 푸시될 때만 실행
+    paths:                                             # 아래 파일들이 변경된 경우에만 트리거됨
+      - app.js
+      - Dockerfile
+      - '.github/workflows/**'
+
+jobs:
+  deploy:                                              # 작업 이름: deploy
+    runs-on: ubuntu-latest                             # 실행 환경: GitHub 제공 최신 우분투
+
+    env:
+      IMAGE: [your-docker-username]/k8s-argocd-test:latest  # 빌드할 도커 이미지 경로 (Docker Hub 기준)
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3                      # 코드 레포지토리를 체크아웃
+
+      - name: Set up Docker
+        uses: docker/setup-buildx-action@v2            # Docker Buildx 세팅 (다중 플랫폼 빌드 지원)
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2                   # Docker Hub에 로그인
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}  # GitHub Secrets에 저장된 사용자 ID
+          password: ${{ secrets.DOCKERHUB_TOKEN }}     # GitHub Secrets에 저장된 액세스 토큰
+
+      - name: Build and Push Docker Image
+        run: |
+          docker build -t $IMAGE .                     # 현재 디렉토리 기준으로 이미지 빌드
+          docker push $IMAGE                           # 빌드된 이미지를 Docker Hub에 푸시
+
+      - name: Update deployment.yaml image
+        run: |
+          sed -i "s|image: .*|image: $IMAGE|" ./app/demo/deployment.yaml  # manifest에 이미지 태그 업데이트
+
+      - name: Commit manifest update
+        run: |
+          git config user.name "github-actions"        # Git 사용자 정보 설정
+          git config user.email "actions@github.com"
+          git add ./app/demo/deployment.yaml || true   # 변경된 manifest 스테이징
+          git diff --cached --quiet || (git commit -m "chore: update image to $IMAGE" && git push)  # 변경 시에만 커밋/푸시
