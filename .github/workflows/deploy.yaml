@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest                             # 실행 환경: GitHub 제공 최신 우분투
 
     env:
-      IMAGE: [your-docker-username]/k8s-argocd-test:latest  # 빌드할 도커 이미지 경로 (Docker Hub 기준)
+      IMAGE: revenantonthemission/k8s-argocd-test:latest  # 빌드할 도커 이미지 경로 (Docker Hub 기준)
 
     steps:
       - name: Checkout
