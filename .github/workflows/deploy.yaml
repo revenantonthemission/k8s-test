@@ -34,6 +34,7 @@ jobs:
           docker push $IMAGE                           # 빌드된 이미지를 Docker Hub에 푸시
 
       - name: Update deployment.yaml image
+        working-directory: ./
         run: |
           sed -i "s|image: .*|image: $IMAGE|" ./app/demo/deployment.yaml  # manifest에 이미지 태그 업데이트
 
