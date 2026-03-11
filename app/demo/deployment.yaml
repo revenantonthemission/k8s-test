@@ -1,0 +1,26 @@
+apiVersion: apps/v1                  # Deployment 리소스는 apps 그룹의 v1 버전 사용
+kind: Deployment                     # 리소스 종류는 Deployment
+
+metadata:
+  name: demo-app                     # Deployment 이름
+  labels:
+    app: demo                        # 라벨: app=demo
+
+spec:
+  replicas: 2                        # 생성할 Pod 수
+
+  selector:
+    matchLabels:
+      app: demo                      # 이 라벨을 가진 Pod을 대상으로 관리
+
+  template:
+    metadata:
+      labels:
+        app: demo                    # 생성되는 Pod에 부여할 라벨
+
+    spec:
+      containers:
+        - name: demo-container       # 컨테이너 이름
+          image: adapterz/k8s-pod:latest  # 사용할 이미지
+          ports:
+            - containerPort: 3000    # 컨테이너에서 열 포트

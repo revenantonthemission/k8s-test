@@ -1,0 +1,16 @@
+apiVersion: v1                      # core/v1 API 그룹. Service 리소스는 core 그룹에 포함됨
+kind: Service                       # 리소스 종류는 Service
+
+metadata:
+  name: demo-service                # Service의 이름. kubectl 등으로 식별 시 사용됨
+
+spec:
+  selector:
+    app: demo                       # app=demo 라벨을 가진 Pod과 연결됨
+
+  ports:
+    - protocol: TCP                # 통신에 사용할 프로토콜 (HTTP는 TCP 사용)
+      port: 80                     # 클러스터 내에서 서비스가 열릴 포트
+      targetPort: 3000             # 연결된 Pod 내부의 컨테이너 포트
+
+  type: NodePort                   # 클러스터 외부에서 접근 가능한 NodePort 타입 지정
