@@ -16,6 +16,6 @@ spec:
     spec:
       containers:
         - name: demo                      # 컨테이너의 이름입니다
-          image: revenantonthemission/k8s-argocd-test:argov2
+          image: revenantonthemission/k8s-argocd-test:latest
           ports:
             - containerPort: 3000         # 컨테이너에서 열 포트입니다 (Express 서버 리스닝 포트)
